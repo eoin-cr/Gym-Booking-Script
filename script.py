@@ -1,6 +1,5 @@
 # script.py
 import requests
-import curlify
 import time
 from datetime import datetime
 import os
@@ -12,6 +11,10 @@ num = os.getenv('STUDENT_NUMBER')
 selected_time = input("Please enter the session starting time in the format HHMM, e.g. 2030.  Otherwise write now to start searching immediately: ")
 
 if selected_time != "now":
+    # The gym selection only activates if you don't select now because I assume
+    # if you're just looking for a gym slot immediately you don't really mind
+    # which gym you get
+    gym = input("Please enter whether you want the Poolside or Performance gym.  If you don't mind simply hit enter: ").lower()
     # Turning time into seconds after 0000 to simplify things
     selected_time_in_seconds = int(selected_time[:-2]) * 3600 + int(selected_time[2:]) * 60
     print(f'Selected time in seconds: {selected_time_in_seconds}')
@@ -84,11 +87,25 @@ while login_sql == "":
 #         if 'Book' in line and 'TD' in line:
         if selected_time != "now":
             formatted_time = selected_time[:-2] + ":" + selected_time[2:]
-            if (formatted_time in base_response[i] and
-                    'Book' in base_response[i+5] and 'TD' in base_response[i+5]):
-                line = base_response[i+5]
-                print(line)
-                base_sql = line[13:-16]
+            if gym is not None:
+                # Checks for the section containing your time, gym choice, and
+                # whether there's a booking
+                if (formatted_time in base_response[i] and gym in
+                        base_response[i+1] and 'Book' in base_response[i+5]
+                        and 'TD' in base_response[i+5]):
+                    line = base_response[i+5]
+                    print(line)
+                    base_sql = line[13:-16]
+            else:
+                # Checks for the section containing your time and whether
+                # there's a booking
+                if (formatted_time in base_response[i] and
+                        'Book' in base_response[i+5] and 'TD' in base_response[i+5]):
+                    line = base_response[i+5]
+                    print(line)
+                    base_sql = line[13:-16]
+
+        # Just looks for any like where there's the option to book
         elif 'Book' in base_response[i] and 'TD' in base_response[i]:
             line = base_response[i]
             print(line)
@@ -119,7 +136,7 @@ while login_sql == "":
             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
             number = {'MEMBER_NO': num}
             booking = requests.post(book_url, data = number)
-
+#
             # We should now have a booking in the gym!
             print(booking.text)
             print("Booked!")
