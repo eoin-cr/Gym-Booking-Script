@@ -109,6 +109,8 @@ while login_sql == "":
         # Just looks for any like where there's the option to book
         elif 'Book' in base_response[i] and 'TD' in base_response[i]:
             line = base_response[i]
+            print(base_response[i-5])
+            print(base_response[i-4])
             print(line)
             base_sql = line[13:-16]
 
@@ -134,7 +136,8 @@ while login_sql == "":
             print(f'---\n{login_sql}\n---')
             # We now have the sql url which will allow us to book a slot when
             # we post with our student number
-            book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
+#             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
+            book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL"
 #             number = {'MEMBER_NO': num}
             data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
             booking = requests.post(book_url, data=data)
