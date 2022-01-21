@@ -134,49 +134,40 @@ while login_sql == "":
 
         if login_sql != "":
             print(f'---\n{login_sql}\n---')
-            # We now have the sql url which will allow us to book a slot when
-            # we post with our student number
+            # We now have the sql url which we will post with our student number
             book_url = "https://hub.ucd.ie/usis/!W_HU_REPORTING.P_RUN_SQL"
-#             book_conf_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMPROV&p_confirmed=Y&p_parameters=" + login_sql
-#             print(book_conf_url)
-#             number = {'MEMBER_NO': num}
             data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
             booking = requests.post(book_url, data=data, allow_redirects=True)
-#             print(booking.text)
 
+            # This post will bring us to another page which would automatically
+            # redirect a browser, however, we have to find the url to make the
+            # next request with.  This intermediary page was especially
+            # annoying to work with as I wasn't certain why I was getting sent
+            # to this page or how to get the url to get to the final page :)
             booking = booking.text.split('\n')
             for line in booking:
-#                 if 'Confirm Booking' in line:
                 if 'refresh' in line:
-#                     print(line)
-#                     print(line[42:-2])
                     booking_conf = line[42:-2]
                     break
 
             book_conf_url = "https://hub.ucd.ie/usis/" + booking_conf
             book_conf_req = requests.get(book_conf_url).text
-#             print(book_conf_req)
 
+            # We're now on the final page!  All we have to do now is emulate
+            # pressing the confirm booking button with another post request
+            # and we'll have a slot
             booking = book_conf_req.split('\n')
             for line in booking:
                 if 'Confirm Booking' in line:
-#                 if 'refresh' in line:
-#                     print(line)
-#                     print(line[121:-21])
                     booking_conf = line[121:-21]
                     break
-#             print(booking.text)
 
             print(f'---\n{booking_conf}\n---')
             booked_url = "https://hub.ucd.ie/usis/" + booking_conf
             data = {"p_query": "SW-GYMBOOK", "p_confirmed": "Y", "p_parameters": booking_conf}
             booked_request = requests.post(booked_url, data=data)
 
-#             book_conf_req = requests.get(book_conf_url).text
-#             print(book_conf_req)
-
             # We should now have a booking in the gym!
-#             print(booking.text)
             print("Booked!")
 
     # Wait a second so we aren't throwing too many requests at the server
