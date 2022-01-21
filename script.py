@@ -137,7 +137,7 @@ while login_sql == "":
             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
 #             number = {'MEMBER_NO': num}
             data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
-            booking = requests.post(book_url, data = data)
+            booking = requests.post(book_url, data=data)
 #
             # We should now have a booking in the gym!
 #             print(booking.text)
