@@ -137,7 +137,7 @@ while login_sql == "":
             # We now have the sql url which will allow us to book a slot when
             # we post with our student number
 #             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
-            book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL"
+            book_url = "https://hub.ucd.ie/usis/!W_HU_REPORTING.P_RUN_SQL"
 #             number = {'MEMBER_NO': num}
             data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
             booking = requests.post(book_url, data=data)
