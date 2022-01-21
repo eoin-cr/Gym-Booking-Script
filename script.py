@@ -95,7 +95,7 @@ while login_sql == "":
                         base_response[i+1] and 'Book' in base_response[i+5]
                         and 'TD' in base_response[i+5]):
                     line = base_response[i+5]
-                    print(line)
+#                     print(line)
                     base_sql = line[13:-16]
             else:
                 # Checks for the section containing your time and whether
@@ -103,15 +103,15 @@ while login_sql == "":
                 if (formatted_time in base_response[i] and
                         'Book' in base_response[i+5] and 'TD' in base_response[i+5]):
                     line = base_response[i+5]
-                    print(line)
+#                     print(line)
                     base_sql = line[13:-16]
 
         # Just looks for any like where there's the option to book
         elif 'Book' in base_response[i] and 'TD' in base_response[i]:
             line = base_response[i]
-            print(base_response[i-5])
-            print(base_response[i-4])
-            print(line)
+#             print(base_response[i-5])
+#             print(base_response[i-4])
+#             print(line)
             base_sql = line[13:-16]
 
     if base_sql != "":
@@ -129,19 +129,52 @@ while login_sql == "":
         for line in login_response:
             if 'name="p_parameters"' in line:
 #                 print("\n---\n".format(line))
-                print(f'---\n{line}')
+#                 print(f'---\n{line}')
                 login_sql = line[48:-4]
 
         if login_sql != "":
             print(f'---\n{login_sql}\n---')
             # We now have the sql url which will allow us to book a slot when
             # we post with our student number
-#             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
             book_url = "https://hub.ucd.ie/usis/!W_HU_REPORTING.P_RUN_SQL"
+#             book_conf_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMPROV&p_confirmed=Y&p_parameters=" + login_sql
+#             print(book_conf_url)
 #             number = {'MEMBER_NO': num}
             data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
-            booking = requests.post(book_url, data=data)
-#
+            booking = requests.post(book_url, data=data, allow_redirects=True)
+#             print(booking.text)
+
+            booking = booking.text.split('\n')
+            for line in booking:
+#                 if 'Confirm Booking' in line:
+                if 'refresh' in line:
+#                     print(line)
+#                     print(line[42:-2])
+                    booking_conf = line[42:-2]
+                    break
+
+            book_conf_url = "https://hub.ucd.ie/usis/" + booking_conf
+            book_conf_req = requests.get(book_conf_url).text
+#             print(book_conf_req)
+
+            booking = book_conf_req.split('\n')
+            for line in booking:
+                if 'Confirm Booking' in line:
+#                 if 'refresh' in line:
+#                     print(line)
+#                     print(line[121:-21])
+                    booking_conf = line[121:-21]
+                    break
+#             print(booking.text)
+
+            print(f'---\n{booking_conf}\n---')
+            booked_url = "https://hub.ucd.ie/usis/" + booking_conf
+            data = {"p_query": "SW-GYMBOOK", "p_confirmed": "Y", "p_parameters": booking_conf}
+            booked_request = requests.post(booked_url, data=data)
+
+#             book_conf_req = requests.get(book_conf_url).text
+#             print(book_conf_req)
+
             # We should now have a booking in the gym!
 #             print(booking.text)
             print("Booked!")
