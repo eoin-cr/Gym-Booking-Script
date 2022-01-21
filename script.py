@@ -14,7 +14,7 @@ if selected_time != "now":
     # The gym selection only activates if you don't select now because I assume
     # if you're just looking for a gym slot immediately you don't really mind
     # which gym you get
-    gym = input("Please enter whether you want the Poolside or Performance gym.  If you don't mind simply hit enter: ").lower()
+    gym = input("Please enter whether you want the Poolside or Performance gym.  If you don't mind simply hit enter: ")
     # Turning time into seconds after 0000 to simplify things
     selected_time_in_seconds = int(selected_time[:-2]) * 3600 + int(selected_time[2:]) * 60
     print(f'Selected time in seconds: {selected_time_in_seconds}')
@@ -70,6 +70,7 @@ while login_sql == "":
     # and it will book you in
     base_url = "https://hub.ucd.ie/usis/W_HU_MENU.P_PUBLISH?p_tag=GYMBOOK"
     base_response = requests.get(base_url).text
+#     print(base_response)
     base_response = base_response.split('\n')
     base_sql = ""
     counter = 0
@@ -134,11 +135,12 @@ while login_sql == "":
             # We now have the sql url which will allow us to book a slot when
             # we post with our student number
             book_url = "https://hub.ucd.ie/usis/W_HU_REPORTING.P_RUN_SQL?p_query=SW-GYMANON&p_confirmed=Y&p_parameters=" + login_sql
-            number = {'MEMBER_NO': num}
-            booking = requests.post(book_url, data = number)
+#             number = {'MEMBER_NO': num}
+            data = {"p_query": "SW-GYMANON", "p_confirmed": "Y", "p_parameters": login_sql, "MEMBER_NO": num}
+            booking = requests.post(book_url, data = data)
 #
             # We should now have a booking in the gym!
-            print(booking.text)
+#             print(booking.text)
             print("Booked!")
 
     # Wait a second so we aren't throwing too many requests at the server
