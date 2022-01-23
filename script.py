@@ -7,8 +7,17 @@ from dotenv import load_dotenv
 
 load_dotenv()
 num = os.getenv('STUDENT_NUMBER')
+timeout_after_x_hrs = True
+time_to_timeout = 3
 
 selected_time = input("Please enter the session starting time in the format HHMM, e.g. 2030.  Otherwise write now to start searching immediately: ")
+
+def current_time_in_seconds_func():
+    now = datetime.now()
+    current_time_secs = int(now.strftime("%S"))
+    current_time_mins = int(now.strftime("%M"))
+    current_time_hrs = int(now.strftime("%H"))
+    return current_time_hrs * 3600 + current_time_mins * 60 + current_time_secs
 
 if selected_time != "now":
     # The gym selection only activates if you don't select now because I assume
@@ -20,12 +29,9 @@ if selected_time != "now":
     print(f'Selected time in seconds: {selected_time_in_seconds}')
 
     # Get the current time and convert to seconds
+    current_time_in_seconds = current_time_in_seconds_func()
     now = datetime.now()
-    current_time_secs = int(now.strftime("%S"))
-    current_time_mins = int(now.strftime("%M"))
-    current_time_hrs = int(now.strftime("%H"))
-    print(f'Time: {current_time_hrs}:{current_time_mins}:{current_time_secs}')
-    current_time_in_seconds = current_time_hrs * 3600 + current_time_mins * 60 + current_time_secs
+    print(f'Time: {now.strftime("%H:%M:%S")}')
     print(f'Current time in seconds: {current_time_in_seconds}')
 
     # Checks if the selected time is before the current time - i.e. tomorrow
@@ -57,6 +63,8 @@ else:
     print("Searching!")
 
 login_sql = ""
+
+start_time_in_seconds = int(current_time_in_seconds_func())
 
 # Will keep searching until an opening is found
 while login_sql == "":
@@ -169,6 +177,18 @@ while login_sql == "":
 
             # We should now have a booking in the gym!
             print("Booked!")
+
+    # Check whether the stated timeout limit has been reached
+    elif (timeout_after_x_hrs and current_time_in_seconds_func() -
+            start_time_in_seconds > time_to_timeout * 3600):
+        print("Run time exceeded timeout limit, program stopped.")
+        login_sql = "stopped"
+
+    # Check whether it's after 20:46 as the last gym slot seems to be at 20:45
+#     elif current_time_in_seconds_func() > 10:
+    elif current_time_in_seconds_func() > 163260:
+        print("Exceeded closing time of last gym slot, program stopped")
+        login_sql = "stopped"
 
     # Wait a second so we aren't throwing too many requests at the server
     else:
