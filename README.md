@@ -12,3 +12,13 @@ If you want to run the code make sure you have a file called `.env` in the same 
 #.env
 STUDENT_NUMBER=YOUR STUDENT NUMBER HERE
 ```
+
+---
+
+## Installing modules
+Use `pip install [module]` to install the required modules.
+
+---
+
+## Running the script
+Use `python3 script.py` to start the script.  Follow the instructions in the terminal.  You must leave the terminal instance running for it to work.  This means that whatever device being used must not be turned off before the script books a slot if you want it to work.  You mustn't closet the terminal instance either.  Either leave the terminal open in the background or use a program such as tmux to create an terminal instance.
