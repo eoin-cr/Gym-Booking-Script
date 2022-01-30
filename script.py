@@ -178,6 +178,10 @@ while login_sql == "":
             # We should now have a booking in the gym!
             print("Booked!")
 
+            # Displays current time
+            current_time = now.strftime("%H:%M:%S")
+            print(f'Current Time = {current_time}')
+
     # Check whether the stated timeout limit has been reached
     elif (timeout_after_x_hrs and current_time_in_seconds_func() -
             start_time_in_seconds > time_to_timeout * 3600):
