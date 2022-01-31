@@ -179,6 +179,7 @@ while login_sql == "":
             print("Booked!")
 
             # Displays current time
+            now = datetime.now()
             current_time = now.strftime("%H:%M:%S")
             print(f'Current Time = {current_time}')
 
