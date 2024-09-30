@@ -27,9 +27,9 @@ if selected_time != "now":
     # The gym selection only activates if you don't select now because I assume
     # if you're just looking for a gym slot immediately you don't really mind
     # which gym you get
-    gym = input(
-        "Please enter whether you want the Poolside or Performance gym.  If you don't mind simply hit enter: "
-    )
+    # gym = input(
+    #     "Please enter whether you want the Poolside or Performance gym.  If you don't mind simply hit enter: "
+    # )
     # Turning time into seconds after 0000 to simplify things
     selected_time_in_seconds = (
         int(selected_time[:-2]) * 3600 + int(selected_time[2:]) * 60
@@ -105,27 +105,27 @@ while login_sql == "":
         #         if 'Book' in line and 'TD' in line:
         if selected_time != "now":
             formatted_time = selected_time[:-2] + ":" + selected_time[2:]
-            if gym is not None:
-                # Checks for the section containing your time, gym choice, and
-                # whether there's a booking
-                if (
-                    formatted_time in base_response[i]
-                    and gym in base_response[i + 1]
-                    and "Book" in base_response[i + 5]
-                    and "TD" in base_response[i + 5]
-                ):
-                    line = base_response[i + 5]
-                    base_sql = line[13:-16]
-            else:
-                # Checks for the section containing your time and whether
-                # there's a booking
-                if (
-                    formatted_time in base_response[i]
-                    and "Book" in base_response[i + 5]
-                    and "TD" in base_response[i + 5]
-                ):
-                    line = base_response[i + 5]
-                    base_sql = line[13:-16]
+            # if gym is not None:
+            # Checks for the section containing your time, gym choice, and
+            # whether there's a booking
+            if (
+                formatted_time in base_response[i]
+                and "Poolside" in base_response[i + 1]
+                and "Book" in base_response[i + 5]
+                and "TD" in base_response[i + 5]
+            ):
+                line = base_response[i + 5]
+                base_sql = line[13:-16]
+            # else:
+            #     # Checks for the section containing your time and whether
+            #     # there's a booking
+            #     if (
+            #         formatted_time in base_response[i]
+            #         and "Book" in base_response[i + 5]
+            #         and "TD" in base_response[i + 5]
+            #     ):
+            #         line = base_response[i + 5]
+            #         base_sql = line[13:-16]
 
         # Just looks for any like where there's the option to book
         elif "Book" in base_response[i] and "TD" in base_response[i]:
