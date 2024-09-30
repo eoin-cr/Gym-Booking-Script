@@ -1,6 +1,7 @@
 # script.py
 import requests
 import time
+import sys
 from datetime import datetime
 import os
 from dotenv import load_dotenv
@@ -13,9 +14,15 @@ time_to_timeout = 3
 hours_before_slot_booking_opens = 2
 seconds_before_to_start_looking = 60 * 60 * hours_before_slot_booking_opens
 
-selected_time = input(
-    "Please enter the session starting time in the format HHMM, e.g. 2030.  Otherwise write now to start searching immediately: "
-)
+# selected_time = input(
+#     "Please enter the session starting time in the format HHMM, e.g. 2030.  Otherwise write now to start searching immediately: "
+# )
+
+args = sys.argv[1:]
+if len(args) == 0:
+    selected_time = "now"
+else:
+    selected_time = args[0]
 
 
 def current_time_in_seconds_func():
