@@ -10,6 +10,9 @@ num = os.getenv("STUDENT_NUMBER")
 timeout_after_x_hrs = True
 time_to_timeout = 3
 
+hours_before_slot_booking_opens = 2
+seconds_before_to_start_looking = 60 * 60 * hours_before_slot_booking_opens
+
 selected_time = input(
     "Please enter the session starting time in the format HHMM, e.g. 2030.  Otherwise write now to start searching immediately: "
 )
@@ -46,21 +49,34 @@ if selected_time != "now":
     if current_time_in_seconds < selected_time_in_seconds:
         # Bookings open 3 hrs before the gym time, so if it's less than 3 hrs
         # before the gym time, start searching immediately
-        if current_time_in_seconds + 10800 > selected_time_in_seconds:
+        if (
+            current_time_in_seconds + seconds_before_to_start_looking
+            > selected_time_in_seconds
+        ):
             time_to_sleep = 0
         else:
             # If it's for the same day, simply wait however many seconds it is
             # until a minute before the selected time
-            time_to_sleep = selected_time_in_seconds - current_time_in_seconds - 10801
+            time_to_sleep = (
+                selected_time_in_seconds
+                - current_time_in_seconds
+                - (seconds_before_to_start_looking + 1)
+            )
     else:
-        if 86399 - current_time_in_seconds + selected_time_in_seconds < 10800:
+        if (
+            86399 - current_time_in_seconds + selected_time_in_seconds
+            < seconds_before_to_start_looking
+        ):
             time_to_sleep = 0
         else:
             # If it is tomorrow, get the seconds left in the day, and add that to
             # the selected time and minus a minute to get the time it needs
             # to wait
             time_to_sleep = (
-                86399 - current_time_in_seconds + selected_time_in_seconds - 10801
+                86399
+                - current_time_in_seconds
+                + selected_time_in_seconds
+                - (seconds_before_to_start_looking + 1)
             )
 
     print("Going to sleep!")
